@@ -43,7 +43,7 @@ for node in root.find("topology").find("nodes").findall("node"):
     if node_tmpl in MAPPING:
         node_kind = MAPPING[node_tmpl]
     else:
-        node_kind = "kind_not_found"
+        print(f"{node_name}:\tKind \x1B[0;33m'{node_tmpl}'\x1b[0m is \x1B[0;31mnot found\x1b[0m in mapper")
     
     node_image_raw = node.get("image")
     node_image_version = re.search("(?<=-).*$", node_image_raw).group()
@@ -86,7 +86,7 @@ for x in raw_nodes:
         cfg_rel_path = f"./configs/{node_name}.cfg"
         cfg_exp_path = f"{export_dir}/configs/{node_name}.cfg"
         
-        print(f"\x1B[0;32mFound\x1B[0m configuration for {node_name}\tAttempting to write to {cfg_exp_path}", end='')
+        print(f"{node_name}:\tConfiguration \x1B[0;32mfound...\x1B[0m Attempting to write to {cfg_exp_path}", end='')
         
         try:
             with open(cfg_exp_path, "w") as cfg:
