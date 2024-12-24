@@ -15,8 +15,8 @@ MAPPING = {
 
 REGISTRY = "ghcr.io/kaelemc"
 
-file_path = "./Ping Factory - CCNP CCIE SP mock lab.unl"
-# file_path = "CCIE SP bootcamp ch02.unl"
+# file_path = "./Ping Factory - CCNP CCIE SP mock lab.unl"
+file_path = "CCIE SP bootcamp ch02.unl"
 
 tree = ET.parse(file_path)
 root = tree.getroot()
@@ -38,7 +38,12 @@ for node in root.find("topology").find("nodes").findall("node"):
     
     node_id = node.get("id")
     node_name = node.get("name")
-    node_kind = MAPPING[node.get("template")]
+    node_tmpl = node.get("template")
+    
+    if node_tmpl in MAPPING:
+        node_kind = MAPPING[node_tmpl]
+    else:
+        node_kind = "kind_not_found"
     
     node_image_raw = node.get("image")
     node_image_version = re.search("(?<=-).*$", node_image_raw).group()
@@ -78,17 +83,18 @@ for x in raw_nodes:
     node_kind = raw_nodes[x]['kind']
     
     if 'config' in raw_nodes[x]:
-        cfg_path = f"{export_dir}/configs/{node_name}.cfg"
+        cfg_rel_path = f"./configs/{node_name}.cfg"
+        cfg_exp_path = f"{export_dir}/configs/{node_name}.cfg"
         
-        print(f"\x1B[0;32mFound\x1B[0m configuration for {node_name}\tAttempting to write to {cfg_path}", end='')
+        print(f"\x1B[0;32mFound\x1B[0m configuration for {node_name}\tAttempting to write to {cfg_exp_path}", end='')
         
         try:
-            with open(cfg_path, "w") as cfg:
+            with open(cfg_exp_path, "w") as cfg:
                 cfg.write(base64.b64decode(raw_nodes[x]['config']).decode())
             print(f" \t\x1B[0;32mSUCCESS\x1B[0m")
         except:
             print(f" \t\x1B[0;31mFAIL\x1B[0m")
-        nodes[node_name] = {'kind': node_kind, 'startup-config': cfg_path}
+        nodes[node_name] = {'kind': node_kind, 'startup-config': cfg_rel_path}
     else:
         nodes[node_name] = {'kind': node_kind}
 
@@ -102,7 +108,6 @@ for x in links:
 clab_topo['topology']['kinds'] = kinds
 clab_topo['topology']['nodes'] = nodes
 clab_topo['topology']['links'] = link_list
-
 
 print("Exporting to 'topo.clab.yml'")
 
