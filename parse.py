@@ -14,15 +14,16 @@ MAPPING = {
 }
 
 REGISTRY = "ghcr.io/kaelemc"
-CFG_DIR = "./configs"
 
-# file_path = "./Ping Factory - CCNP CCIE SP mock lab.unl"
-file_path = "CCIE SP bootcamp ch02.unl"
+file_path = "./Ping Factory - CCNP CCIE SP mock lab.unl"
+# file_path = "CCIE SP bootcamp ch02.unl"
 
 tree = ET.parse(file_path)
 root = tree.getroot()
 
 name = "".join([ c if c.isalnum() else "-" for c in root.get("name") ]).lower()
+
+export_dir = f"./export-{name}"
 
 clab_topo = {
     'name': name,
@@ -67,7 +68,8 @@ link_list = []
 nodes = {}
 
 try:
-    os.makedirs(f"./configs")
+    os.makedirs(export_dir)
+    os.makedirs(f"{export_dir}/configs")
 except:
     pass
 
@@ -76,7 +78,7 @@ for x in raw_nodes:
     node_kind = raw_nodes[x]['kind']
     
     if 'config' in raw_nodes[x]:
-        cfg_path = f"{CFG_DIR}/{node_name}.cfg"
+        cfg_path = f"{export_dir}/configs/{node_name}.cfg"
         
         print(f"\x1B[0;32mFound\x1B[0m configuration for {node_name}\tAttempting to write to {cfg_path}", end='')
         
@@ -104,7 +106,7 @@ clab_topo['topology']['links'] = link_list
 
 print("Exporting to 'topo.clab.yml'")
 
-with open('topo.clab.yml', 'w') as yaml_file:
+with open(f'{export_dir}/topo.clab.yml', 'w') as yaml_file:
     yaml.dump(clab_topo, yaml_file, default_flow_style=False, sort_keys=False)
 
 print(f"Done {name}")

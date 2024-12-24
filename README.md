@@ -11,7 +11,10 @@ It can also be used to 'extract' startup confgs from an EVE-NG `.unl` file.
     - `REGISTRY` to your container registry (usually this should be `vrnetlab`).
     - `file_path` to the name of your `.unl` file (including file extension).
 
-1. Run `parse.py`, you should get the topology outputted as `topo.clab.yaml` and any startup configs under the `./configs` dir.
+1. Run `parse.py`. A new export directory with the lab name should be created. In that directory you will find:
+
+- Converted containerlab topology
+- Any startup configurations under the 'config' directory.
 
 ## Caveats
 
