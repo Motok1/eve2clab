@@ -2,3 +2,7 @@ configs/*
 *.unl
 *.y*ml
 *.cfg
+__pycache__
+export-*/
+
+.DS_Store
