@@ -2,3 +2,5 @@ configs/*
 *.unl
 *.y*ml
 *.cfg
+__pycache__
+export-*/
